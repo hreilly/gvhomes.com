@@ -20,6 +20,10 @@ $container   = get_theme_mod( 'understrap_container_type' );
             <h3>Complete packages starting at $1,085*</h3>
         </div>
 
+        <div class="services-flex">
+            
+        </div>
+
         <!-- Call and define pricing tables -->
         <?php 
 
