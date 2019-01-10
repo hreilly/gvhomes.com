@@ -108,7 +108,7 @@ $container   = get_theme_mod('understrap_container_type');
               '<a class="subtle-button" href="<?php echo $link; ?>">Details &amp; Photos</a>' +
             '</div>';
           
-          // info window for each community
+          // info window for each listing
           infoWindows[<?php echo $the_query->current_post ?>] = new google.maps.InfoWindow({
             content: listingContent,
             maxWidth: 400,
@@ -116,7 +116,7 @@ $container   = get_theme_mod('understrap_container_type');
 
           // open each infoWindow on click
           markers[<?php echo $the_query->current_post ?>].addListener('click', function() {
-            // close all other infoWindows
+            // close all other infoWindows (this isn't working)
             for (var i = 0; i < infoWindows.length; i++) {
               if (infoWindow) {
                 infoWindow.close();
