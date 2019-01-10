@@ -22,19 +22,22 @@ $container   = get_theme_mod('understrap_container_type');
     // locate you.
 
     // Initiate variables
-    var map, infoWindow;
+    var map;
+    var infowindow;
+    var markers = [];
+    var infoWindows = [];
 
-    // General map function
+////// General map function
     function initMap() {
       var clovis = {lat: 36.8399395, lng: -119.735154};
       map = new google.maps.Map(document.getElementById('map'), {
         center: clovis,
-        zoom: 15
+        zoom: 18
       });
 
       infoWindow = new google.maps.InfoWindow;
 
-      // Try HTML5 geolocation.
+//////// Try HTML5 geolocation.
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
           var pos = {
@@ -53,63 +56,88 @@ $container   = get_theme_mod('understrap_container_type');
         // Browser doesn't support Geolocation
         handleLocationError(false, infoWindow, map.getCenter());
       }
-      
-      // Defines an empty array for property markers to fill
-      var markers = [];
 
-      // Post query
+//////// Post query
       <?php 
 
       $args = array(
-          'posts_per_page' => -1,
-          'post_type'      => 'property',
-          'meta_query'     => array(
-              array(
-              'location'  => array(
-                  'key'      => 'property_map_location',
-                  'compare'  => 'EXISTS'
-              )
+        'posts_per_page' => -1,
+        'post_type'      => 'property',
+        'meta_query'     => array(
+          array(
+            'location'  => array(
+              'key'      => 'property_map_location',
+              'compare'  => 'EXISTS'
           )
+        )
       ));
 
       $the_query = new WP_Query( $args );
 
-      // Global variables
-      $address = get_the_title();
-      $plan = get_field('floorplan');
-      $price = get_field('price');
-      $beds = get_field('bedrooms');
-      $baths = get_field('bathrooms');
-      $sqft = get_field('square_footage');
-      $link = get_the_permalink();
-
-      // Loop
+      // Loop (final curly bracket is purposely open)
       if ( $the_query->have_posts() ) {
         while ( $the_query->have_posts() ) {
           $the_query->the_post();
       ?>
 
-        <?php if (!empty( get_field('property_map_location') ) ) :?>
-          // populate map with marker for each listing
-          markers[<?php echo $the_query->current_post ?>] = new google.maps.Marker({
-              position: {lat: <?php echo get_field('property_map_location')['lat'] ?>, lng: <?php echo get_field('property_map_location')['lng'] ?>},
-              map: map,
-              animation: google.maps.Animation.DROP,
-          });
-        <?php endif; ?>
+        <?php 
+        
+        // PHP listing variables for infowindows
+        $address = get_the_title();
+        $price = get_field('price');
+        $beds = get_field('bedrooms');
+        $baths = get_field('bathrooms');
+        $sqft = get_field('square_footage');
+        $link = get_the_permalink();
+        
+        if (!empty( get_field('property_map_location') ) ) :?>
           
-      <?php
-          }
-        /* Restore original Post Data */
-        wp_reset_postdata();
-      } else {
-        // no posts found
-      }
+          // Add marker for each listing to array
+          markers[<?php echo $the_query->current_post ?>] = new google.maps.Marker({
+            position: {lat: <?php echo get_field('property_map_location')['lat'] ?>, lng: <?php echo get_field('property_map_location')['lng'] ?>},
+            map: map,
+            animation: google.maps.Animation.DROP,
+          });
+
+          var listingContent = '<div style="margin: auto; text-align: left; padding: 20px 0px 20px 5%;">' +
+              '<h4><?php $plan = get_field('floorplan'); if( $plan ) :?><?php echo get_the_title( $plan->ID ); ?><?php endif; ?></h4>' +
+              '<h5 style="font-weight: 400;"><?php echo $price; ?></h5>' +
+              '<div class="page-divider-gradient"></div>' +
+              '<p style="font-weight: 700;"><?php echo $beds; ?> BD &nbsp;|&nbsp; <?php echo $baths; ?> BA &nbsp;|&nbsp; <?php echo $sqft; ?> Sq. Ft.</p>' +
+              '<p style="font-weight: bold;"><?php echo $address; ?></p>' +
+              '<a class="subtle-button" href="<?php echo $link; ?>">Details &amp; Photos</a>' +
+            '</div>';
+          
+          // info window for each community
+          infoWindows[<?php echo $the_query->current_post ?>] = new google.maps.InfoWindow({
+            content: listingContent,
+            maxWidth: 400,
+          });
+
+          // open each infoWindow on click
+          markers[<?php echo $the_query->current_post ?>].addListener('click', function() {
+            // close all other infoWindows
+            for (var i = 0; i < infoWindows.length; i++) {
+              if (infoWindow) {
+                infoWindow.close();
+              }
+            }
+
+            infoWindows[<?php echo $the_query->current_post ?>].open(map, markers[<?php echo $the_query->current_post ?>]);
+
+          });
+
+        <?php endif; ?>
+
+      // End Loop (close open curly brackets)
+      <?php } wp_reset_postdata(); } else {
+          // no posts found
+        }
       ?>
 
     }
     
-    // Handles errors in location services
+////// Handles errors in location services
     function handleLocationError(browserHasGeolocation, infoWindow, pos) {
       infoWindow.setPosition(pos);
       infoWindow.setContent(browserHasGeolocation ?
@@ -118,10 +146,10 @@ $container   = get_theme_mod('understrap_container_type');
       infoWindow.open(map);
       
     }
-    google.maps.event.addDomListener(window, 'load', initialize);
+    
   </script>
 
-  <div id="map" class="map col m-0">
+  <div id="map" style="height: 70vh;" class="map col m-0">
   </div>
 
 <script async defer
