@@ -68,6 +68,10 @@ $container   = get_theme_mod('understrap_container_type');
             'location'  => array(
               'key'      => 'property_map_location',
               'compare'  => 'EXISTS'
+            ),
+            'coming_soon' => array(
+              'key' => 'coming_soon',
+              'value' => 0
           )
         )
       ));
