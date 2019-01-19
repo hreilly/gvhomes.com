@@ -23,9 +23,9 @@ $container   = get_theme_mod( 'understrap_container_type' );
         padding: 20px;
         align-items: center;
     }
-    .repeater-row:nth-of-type(1) {
+    /*.repeater-row:nth-of-type(1) {
         border-top: 1px solid #d2d2d2;
-    }
+    }*/
     .repeater-row:nth-of-type(even) {
         background-color: #f2f2f2;
     }
@@ -57,7 +57,7 @@ $container   = get_theme_mod( 'understrap_container_type' );
 
 <!-- Coming Soon Query -->
 
-    <div style="padding-top: 50px; margin:auto;">
+    <div style="padding-top: 50px; margin:auto; max-width: 1080px;">
 
     <h3>Coming Soon:</h3>
     <div class="page-divider-gradient" style="padding-top: 5px;"></div>
@@ -95,9 +95,9 @@ $container   = get_theme_mod( 'understrap_container_type' );
         
         ?>
 
-        <div id="<?php echo $comm_name_nospc; ?>ComingSoon" data-listings="">
+        <div id="<?php echo $comm_name_nospc; ?>ComingSoon" style="border: 1px solid rgba(37,36,37,.125); border-radius: 3px; max-width: 1080px; margin: auto auto 30px auto;">
 
-        <h2 style="text-align: center; font-weight: 300;"><?php echo $comm_name; ?></h2>
+        <h2 style="text-align: center; font-weight: 300; padding: 20px; background-color: rgba(37,36,37,.03); border-bottom: 1px solid rgba(37,36,37,.125);"><?php echo $comm_name; ?></h2>
 
             <?php 
 
@@ -135,7 +135,7 @@ $container   = get_theme_mod( 'understrap_container_type' );
 
             <?php if ( $prop_query->have_posts() ): ?>
 
-            <div class="repeater-rows-container" style="padding-bottom: 60px;">
+            <div class="repeater-rows-container" style="padding-bottom: 40px;">
 
                 <?php while ( $prop_query->have_posts() ) : $prop_query->the_post(); 
                 
@@ -237,8 +237,6 @@ $container   = get_theme_mod( 'understrap_container_type' );
         </div>
 
         <?php endwhile; ?>
-
-        <hr>
 
         <?php 
 
