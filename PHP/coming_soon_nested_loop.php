@@ -90,9 +90,9 @@ $container   = get_theme_mod( 'understrap_container_type' );
 
   <div style="padding-top: 50px; margin:auto; max-width: 1080px;">
 
-  <h3>Coming Soon:</h3>
+  <h3 style="text-align: center;">Get on the fast track to a home that is uniquely your own.</h3>
   <div class="page-divider-gradient" style="padding-top: 5px;"></div>
-  <p style="margin: 40px; text-align: center; font-style: italic;">These homes are in the early stages of construction, meaning you may still be able to select a number of finishes and custom options. Get on the fast track to a home that's uniquely your own. Contact an agent to learn more.</p>
+  <p style="margin: 40px; text-align: center; font-style: italic;">These homes are <strong>still under construction</strong>, meaning there may still be time to choose your flooring, cabinets, colors and more, without the wait of building from scratch. Contact a Granville agent for details on any of the following homes, including available options and completion dates.</p>
 
   <!-- Define Community Args -->
 
