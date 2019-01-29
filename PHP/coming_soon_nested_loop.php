@@ -134,6 +134,8 @@ $container   = get_theme_mod( 'understrap_container_type' );
 
       <div id="<?php echo $comm_name_nospc; ?>ComingSoon" style="border: 1px solid rgba(37,36,37,.125); border-radius: 3px; max-width: 1080px; margin: auto auto 30px auto;" class="card">
 
+        <!-- Button-based Card Header -->
+        
         <div class="card-header" id="heading<?php the_ID(); ?>">
           <h5 class="mb-0">
             <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse<?php the_ID(); ?>" aria-expanded="false" aria-controls="collapse<?php the_ID(); ?>" style="color: #252425; text-decoration: none; width: 100%;">
@@ -180,14 +182,14 @@ $container   = get_theme_mod( 'understrap_container_type' );
 
         <?php if ( $prop_query->have_posts() ): ?>
 
-          <div class="repeater-rows-container collapse" style="padding-bottom: 40px;" id="collapse<?php the_ID(); ?>" aria-labelledby="heading<?php the_ID(); ?>">
+          <div class="repeater-rows-container collapse" style="padding-bottom: 40px; max-height: 100%;" id="collapse<?php the_ID(); ?>" aria-labelledby="heading<?php the_ID(); ?>">
 
             <?php while ( $prop_query->have_posts() ) : $prop_query->the_post(); 
             
             $prop_id = get_the_ID();
             $prop_title = get_the_title();
 
-            // define 'property_parent_community' post object variable for calling title from parent community (used for search filter)
+            // Define post object variables for calling meta from object fields
 
             $parent_post_object = get_field('property_parent_community');
             $plan_post_object = get_field('floorplan');
@@ -262,6 +264,8 @@ $container   = get_theme_mod( 'understrap_container_type' );
         <!-- Define case for empty property queries -->  
 
         <?php else: 
+
+        // Recall cached post data from earlier loop
         
         $post = $preserve_post;
         setup_postdata( $post );
@@ -270,7 +274,7 @@ $container   = get_theme_mod( 'understrap_container_type' );
 
           <style>
               
-            /* styling applies only to communities that don't have listings populated from the nested loop */
+            /* styling applies only to communities that don't have listings populated from the nested loop (ignore the fact the class name looks broken, some IDEs just have trouble with the PHP call in there */
             #<?php echo $comm_name_nospc; ?>ComingSoon {
               display: none;
             }
