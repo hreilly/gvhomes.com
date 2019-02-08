@@ -94,9 +94,9 @@ $container   = get_theme_mod( 'understrap_container_type' );
   <div class="page-divider-gradient" style="padding-top: 5px;"></div>
   <p style="margin: 40px; text-align: center; font-style: italic;">These homes are <strong>still under construction</strong>, meaning there may still be time to choose your flooring, cabinets, colors and more, without the wait of building from scratch. Contact a Granville agent for details on any of the following homes, including available options and completion dates.</p>
 
-  <!-- Define Community Args -->
+  <?php
 
-  <?php 
+  // Define query for "parent" communities
 
   $comm_args = array(
     'posts_per_page' => -1,
@@ -116,13 +116,13 @@ $container   = get_theme_mod( 'understrap_container_type' );
 
   ?>
 
-  <!-- Check for Valid Communities -->
+  <?php // Check for valid communities
+  
+  if ( $comm_query->have_posts() ): ?>
 
-  <?php if ( $comm_query->have_posts() ): ?>
-
-    <!-- Begin Community Loop -->
-
-    <?php while ( $comm_query->have_posts() ) : $comm_query->the_post(); 
+    <?php // Begin community loop
+    
+    while ( $comm_query->have_posts() ) : $comm_query->the_post(); 
     
     $comm_id = get_the_ID();
     $comm_name = get_the_title();
@@ -134,8 +134,8 @@ $container   = get_theme_mod( 'understrap_container_type' );
 
       <div id="<?php echo $comm_name_nospc; ?>ComingSoon" style="border: 1px solid rgba(37,36,37,.125); border-radius: 3px; max-width: 1080px; margin: auto auto 30px auto;" class="card">
 
-        <!-- Button-based Card Header -->
-        
+        <!-- Accordian Trigger -->
+
         <div class="card-header" id="heading<?php the_ID(); ?>">
           <h5 class="mb-0">
             <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse<?php the_ID(); ?>" aria-expanded="false" aria-controls="collapse<?php the_ID(); ?>" style="color: #252425; text-decoration: none; width: 100%;">
@@ -143,15 +143,15 @@ $container   = get_theme_mod( 'understrap_container_type' );
             </button>
           </h5>
         </div>
-
-        <!-- Define Property Args -->
         
-        <?php 
+        <?php
+        
+        // Define property args to capture property listings by parent community
 
         $prop_args = array(
           'posts_per_page' => -1,
           'post_type'      => 'property',
-          'orderby'        => 'sq_ft',
+          'orderby'        => 'clean_price',
           'order'          => 'ASC',
           'meta_query'     => array(
             'relation'   => 'AND',
@@ -176,20 +176,33 @@ $container   = get_theme_mod( 'understrap_container_type' );
 
         $prop_query = new WP_Query( $prop_args );
 
+        // Check for the cabinet_hold field on the parent community. This toggle field allows us to display a disclaimer if there are only move-in ready & build-to-suit homes available in a community 
+        $cabinet_hold_available = get_field( 'cabinet_hold' );
+
         ?>
 
-        <!-- Begin Property Subloop -->
-
-        <?php if ( $prop_query->have_posts() ): ?>
+        <?php // Begin "Property" subloop 
+        
+        if ( $prop_query->have_posts() ): ?>
 
           <div class="repeater-rows-container collapse" style="padding-bottom: 40px; max-height: 100%;" id="collapse<?php the_ID(); ?>" aria-labelledby="heading<?php the_ID(); ?>">
 
-            <?php while ( $prop_query->have_posts() ) : $prop_query->the_post(); 
+            <?php // Check to see if cabinet_hold is null; if it is, show the disclaimer
+            
+            if ( !$cabinet_hold_available ) : ?>
+            
+              <div style="font-style: italic; padding: 40px 20px; text-align: center;">Due to high demand, the homes currently available in this community have all been expedited. This means every feature has already been carefully chosen by our expert designers and can’t be customized further at this time. Please contact an agent to learn more.</div>
+
+            <?php endif; ?>
+
+            <?php // Generate looped content
+            
+            while ( $prop_query->have_posts() ) : $prop_query->the_post(); 
             
             $prop_id = get_the_ID();
             $prop_title = get_the_title();
 
-            // Define post object variables for calling meta from object fields
+            // define 'property_parent_community' post object variable for calling title from parent community (used for search filter)
 
             $parent_post_object = get_field('property_parent_community');
             $plan_post_object = get_field('floorplan');
@@ -242,13 +255,14 @@ $container   = get_theme_mod( 'understrap_container_type' );
 
             <script>
 
-              <?php while ( $prop_query->have_posts() ) : $prop_query->the_post(); 
+              <?php // Loops through posts and creates a function associated with each button, then sets the value of the "Tract and Lot" field in the Active Campaign form using post meta.
+              
+              while ( $prop_query->have_posts() ) : $prop_query->the_post(); 
               
               $plan_post_object = get_field('floorplan');
               
               ?>
 
-                // Loops through posts and creates a function associated with each button, then sets the value of the "Tract and Lot" field in the Active Campaign form using post meta.
                 function tract<?php echo get_field('tract'); ?>lot<?php echo get_field('lot'); ?>() {
                     document.getElementById('tractandlot').setAttribute('value','<?php echo get_field('tract'); ?> Lot <?php echo get_field('lot'); ?>');
                     var element = document.getElementById('plan_name_var');
@@ -261,11 +275,9 @@ $container   = get_theme_mod( 'understrap_container_type' );
 
           </div>
 
-        <!-- Define case for empty property queries -->  
-
-        <?php else: 
-
-        // Recall cached post data from earlier loop
+        <?php // Define case for empty property queries
+        
+        else: 
         
         $post = $preserve_post;
         setup_postdata( $post );
@@ -274,7 +286,7 @@ $container   = get_theme_mod( 'understrap_container_type' );
 
           <style>
               
-            /* styling applies only to communities that don't have listings populated from the nested loop (ignore the fact the class name looks broken, some IDEs just have trouble with the PHP call in there */
+            /* styling applies only to communities that don't have listings populated from the nested loop */
             #<?php echo $comm_name_nospc; ?>ComingSoon {
               display: none;
             }
