@@ -170,6 +170,10 @@ $container   = get_theme_mod( 'understrap_container_type' );
             'parent_comm' => array(
               'key'      => 'property_parent_community',
               'value'    => $comm_id
+            ),
+            'sold'        => array(
+              'key'     => 'sold',
+              'value' => 0
             )
           )
         );
