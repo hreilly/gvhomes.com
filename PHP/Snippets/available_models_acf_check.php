@@ -1,3 +1,5 @@
+From Floor Plans:
+
 <!-- Check for available models -->
 
 <?php 
@@ -41,3 +43,37 @@ $the_query = new WP_Query( $models );
 <?php endif; ?>
 
 <?php wp_reset_query(); ?>
+
+From Communities:
+
+<!-- Check for available models -->
+
+<?php
+
+$models = get_field( 'models_available' );
+
+?>
+
+<style>
+    .model-plan::after{
+        content: ','
+    }
+    .model-plan:last-of-type::after{
+        content: ' '
+    }
+</style>
+
+<?php if( $models ): ?>
+
+    <h3>Models Available</h3>
+    <p>
+
+    <?php foreach( $models as $model ): ?>
+
+        <a href="<?php echo get_permalink( $model->ID ); ?>" class="model-plan"><?php echo get_the_title( $model->ID ); ?></a>
+        
+    <?php endforeach; ?>
+
+    </p>
+
+<?php endif; ?>
