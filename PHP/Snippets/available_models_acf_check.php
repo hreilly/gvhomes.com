@@ -28,7 +28,7 @@ $the_query = new WP_Query( $models );
 
 <?php if( $the_query->have_posts() ): ?>
 
-    <p style="text-align: center; font-weight: bold; font-style: italic;">Model Available at:
+    <p style="text-align: center; font-weight: bold; font-style: italic;">Model Home Located at:
 
     <?php while( $the_query->have_posts() ) : $the_query->the_post(); ?>
 
