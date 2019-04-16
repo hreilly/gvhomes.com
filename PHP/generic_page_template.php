@@ -1,7 +1,7 @@
 <?php
-// Template Name: Customer Care Package
+// Template Name: New Name Here
 /**
- * The template to display pricing for various customer care packages.
+ * The template to display this page.
  *
  * @package understrap
  */
